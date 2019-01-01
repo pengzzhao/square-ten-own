@@ -4,6 +4,7 @@
 .git
 
 *.iml
+.idea
 # Log file
 *.log
 
