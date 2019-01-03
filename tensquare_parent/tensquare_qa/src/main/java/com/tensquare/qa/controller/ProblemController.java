@@ -5,6 +5,7 @@ import com.tensquare.qa.service.ProblemService;
 import entity.PageResult;
 import entity.Result;
 import entity.StatusCode;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -29,6 +31,8 @@ public class ProblemController {
     @Autowired
     private ProblemService problemService;
 
+    @Autowired
+    private HttpServletRequest request;
 
     /**
      * 查询全部数据
@@ -84,6 +88,10 @@ public class ProblemController {
      */
     @RequestMapping(method = RequestMethod.POST)
     public Result add(@RequestBody Problem problem) {
+        String token = (String) request.getAttribute("claims_user");
+        if (StringUtils.isEmpty(token)){
+            return new Result(false, StatusCode.ACCESS_ERROR, "权限不足");
+        }
         problemService.add(problem);
         return new Result(true, StatusCode.OK, "增加成功");
     }
